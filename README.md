@@ -1,5 +1,5 @@
-<h1 align="center">Instagram Clone</h1>
-<h3 align="center">Using Firebase services and MVVM. Features: Login / Sign Up, Image Uploading / Downloading, Post Feed, User Profile, User Search, Edit Profile, Firebase backend</h3>
+<h1 align="center">MapKitWWDC23</h1>
+<h3 align="center">Exploring new features of WWDC23</h3>
 
 <p align="center">
   <img src="https://github.com/Increase12345/MapKitWWDC23/assets/98255061/6cf7110e-44e0-42c0-b850-1ef1307f8e8c" width="200" />
