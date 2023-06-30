@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import MapKit
 
 // For contentView
@@ -29,6 +30,29 @@ extension ContentView {
         
         let results = try? await MKLocalSearch(request: request).start()
         self.results = results?.mapItems ?? []
+    }
+    
+    func fetchRoute() {
+        if let mapSelection {
+            let request = MKDirections.Request()
+            request.source = MKMapItem(placemark: .init(coordinate: .userLocation))
+            request.destination = mapSelection
+            
+            Task {
+                let result = try? await MKDirections(request: request).calculate()
+                route = result?.routes.first
+                routeDestination = mapSelection
+                
+                withAnimation(.snappy) {
+                    routeDisplaying = true
+                    showDetails = true
+                    
+                    if let rect = route?.polyline.boundingMapRect, routeDisplaying {
+                        cameraPosition = .rect(rect)
+                    }
+                }
+            }
+        }
     }
 }
 

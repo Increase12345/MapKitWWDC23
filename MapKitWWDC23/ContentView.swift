@@ -9,12 +9,15 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
-    @State private var cameraPosition: MapCameraPosition = .region(.userRegion)
+    @State var cameraPosition: MapCameraPosition = .region(.userRegion)
     @State var searchText = ""
     @State var results = [MKMapItem]()
-    @State private var mapSelection: MKMapItem?
-    @State private var showDetails = false
-    @State private var getDirections = false
+    @State var mapSelection: MKMapItem?
+    @State var showDetails = false
+    @State var getDirections = false
+    @State var routeDisplaying = false
+    @State var route: MKRoute?
+    @State var routeDestination: MKMapItem?
     
     var body: some View {
         Map(position: $cameraPosition, selection: $mapSelection) {
@@ -39,8 +42,20 @@ struct ContentView: View {
             }
             
             ForEach(results, id: \.self) { item in
-                let placemark = item.placemark
-                Marker(placemark.name ?? "", coordinate: placemark.coordinate)
+                if routeDisplaying {
+                    if item == routeDestination {
+                        let placemark = item.placemark
+                        Marker(placemark.name ?? "", coordinate: placemark.coordinate)
+                    }
+                } else {
+                    let placemark = item.placemark
+                    Marker(placemark.name ?? "", coordinate: placemark.coordinate)
+                }
+            }
+            
+            if let route {
+                MapPolyline(route.polyline)
+                    .stroke(.blue, lineWidth: 6)
             }
         }
         .overlay(alignment: .top) {
@@ -56,6 +71,11 @@ struct ContentView: View {
                 await searchPlaces()
             }
         }
+        .onChange(of: getDirections, { oldValue, newValue in
+            if newValue {
+                fetchRoute()
+            }
+        })
         .onChange(of: mapSelection, { oldValue, newValue in
             showDetails = newValue != nil
         })
